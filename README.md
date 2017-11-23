@@ -1,23 +1,23 @@
 # 传递监听数据方式:
-	```
+	```js
 		window.postMessage(messageData,'*');
 	   	window.addEventListener('message',(data)=>{/*do somethin*/});
 	```
 
 # 例子：
-	```
+	```js
 		window.postMessage({evtName:'play',data:'dom1'},'*');
 	```
 
 # 传递题目数据:
         
       
-    ```
+    ```js
 	选择题：
 	window.postMessage({evtName:'sendQuestion',data:{"ID":"AVr5woRJPywbg_0lhGCU","Content":"倒数等于本身的数是（　　）",
-										"Options":["选项A","选项B","选项C","选项D"],"CateName":"选择题","Degree":"2",
-										"Answer":"D","Method":"【解答】解：因为只有（+1）×（+1）=1，（-1）×（-1）=1，<br />所以倒数等于本身的数是±1．<br />故选D．",
-										"Analyse":"【分析】根据倒数的定义可知倒数等于本身的数是±1．"}})
+		"Options":["选项A","选项B","选项C","选项D"],"CateName":"选择题","Degree":"2",
+		"Answer":"D","Method":"【解答】解：因为只有（+1）×（+1）=1，（-1）×（-1）=1，<br />所以倒数等于本身的数是±1．<br />故选D．",
+		"Analyse":"【分析】根据倒数的定义可知倒数等于本身的数是±1．"}})
 
         问答题:
 	data:{
