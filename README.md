@@ -1,6 +1,7 @@
-传递监听数据方式:
-	window.postMessage(messageData,'*');
-	window.addEventListener('message',(data)=>{/*do somethin*/});
+#传递监听数据方式:
+	```window.postMessage(messageData,'*');
+	   window.addEventListener('message',(data)=>{/*do somethin*/});
+	```
 
 例子：
 	window.postMessage({evtName:'play',data:'dom1'},'*');
