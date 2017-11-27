@@ -65,3 +65,102 @@ window.parent.postMessage({sc:'ltjj',ls:'set',num:kk,ans:nn},'*');
  
  
 ###总结，课件请求一次一般有两个以上的参数，sc表示当前环节，ls表示说明是要请求获取数据还是只提交内容，后面添加的参数就是内容，比如成绩和答案。
+
+## 内嵌页面相关交互补充
+
+1、开始加载课件时，由外部组件内嵌页面要打开的地址及用户身份(教师或学生，涉及区分展示)
+    
+
+2、内嵌页面加载完成后，不要自动播放动画或视频，通知外层页面 (由老师确认所有学员都加载成功后再正式开始)
+>	涉及事件: domReady(加载成功) || startClass(开始课程)
+
+3、老师点选某一项目时，内层页面通知外部，最好能不自动切换，所有的操作都由外部通知
+>	涉及事件: pickedStep(选择栏目) || gotoStep(展示选择栏目)
+
+4、涉及音频、视频播放，通知外部，由老师指定多媒体的开始、暂停、终止
+>	涉及事件: mediaEvent('play', 'puase', stop') || mediaAction('play', 'puase', 'stop')
+
+5、进入题目交互环节后，由外部传入题目、选项
+>	涉及事件: null || showQuestion({title:'', options:[], id:''})
+
+6、学生答题后，点击提交后通知外层(提交答案统一点击提交按钮)
+>	涉及事件: submitResult({id: '', result: '' || ['A', 'B', 'C']})
+
+7、老师宣布答案及解答内容
+>	涉及事件: showAnswers({id: '', answer: '' || [], detail: ''})
+
+8、交互格式：
+```js
+    /* 从外向里 */
+    var innerCourse = document.getElementById('html5Box');
+    // 开始课程
+    innerCourse.postMessage({
+        action: 'startClass',
+        data: null
+    });
+    // 暂停播放
+    innerCourse.postMessage({
+        action: 'mediaAction',
+        data: {
+            id: mediaId,
+            type: 'puase',
+            during: 21000
+        }
+    });
+    // 展示题目
+    innerCourse.postMessage({
+        action: 'showQuestion',
+        data: {
+            type: 'choiceType',
+            id: questionId,
+            title: "下面哪一条表述是正确的",
+            options: [
+                '1+1=2',
+                '1*1=2',
+                '1-1=2'
+            ]
+        }
+    });
+    // 展示结果
+    innerCourse.postMessage({
+        action: 'showAnswers',
+        data: {
+            id: questionId,
+            userResult: true || false,
+            answer: 2,
+            dertail: '1+1=2， 1*1=1， 1-1=0'
+        }
+    });
+
+    /* 从里向外 */
+    var outerWindow = window.parent;
+    // 加载完毕
+    outerWindow.postMessage({
+        action: 'classReadey',
+        data: null
+    });
+    // 选择某栏目(点击某个元素，截获该元素的点击事件并通知外层，等待外部通知内部展示那一栏目)
+    outerWindow.postMessage({
+        action: 'pickedStep',
+        data: {
+            id: 'goToMedia'
+        }
+    });
+    // 停止多媒体播放(传递消息到外层，不做任何处理，等待外部通知暂停与否)
+    outerWindow.postMessage({
+        action: 'mediaEvent', 
+        data: {
+            id: mediaId,
+            type: 'puase',
+            during: 21000
+        }
+    });
+    // 提交答案(提交学生选择结果，单选或多选，或者多个填空的内容)，结果的正确与否由外层通知
+    outerWindow.postMessage({
+        action: 'submitResult',
+        data: {
+            id: 'questionId',
+            result: 2 || [2, 3]
+        }
+    });
+
